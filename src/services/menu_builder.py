@@ -23,7 +23,22 @@ class MenuBuilder:
             raise ValueError("Dish does not exist")
 
         self.inventory.consume_recipe(curr_dish.recipe)
-
     # Req 4
+
     def get_main_menu(self, restriction=None) -> List[Dict]:
-        pass
+        menu = []
+
+        for dish in self.menu_data.dishes:
+            filtered_dishes = dish.get_restrictions().intersection({restriction})
+            ingredients_available = all(ingredient in self.inventory.inventory for ingredient in dish.get_ingredients())
+
+            if not len(filtered_dishes) and ingredients_available:
+                dish_info = {
+                    "dish_name": dish.name,
+                    "price": dish.price,
+                    "ingredients": dish.get_ingredients(),
+                    "restrictions": dish.get_restrictions()
+                }
+                menu.append(dish_info)
+
+        return menu
